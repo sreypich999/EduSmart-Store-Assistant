@@ -46,10 +46,11 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 ### Backend
 - **FastAPI**: High-performance async web framework
 - **Google Gemini AI**: Advanced language model for responses
+- **LangChain**: AI framework for streamlined Gemini integration and prompt management
 - **ChromaDB**: Vector database for product embeddings (uses `all-MiniLM-L6-v2` embedding model)
 - **SQLite**: Relational database for conversation history
 - **gTTS**: Google Text-to-Speech for voice responses
-- **LangChain**: Optional AI framework integration
+- **python-dotenv**: Environment variable management for API keys
 
 ### Frontend
 - **HTML5/CSS3**: Modern responsive design
@@ -74,7 +75,6 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 ## 🔧 Installation
 
 
-```
 
 ### 1. Set Up Python Environment
 ```bash
@@ -280,8 +280,12 @@ Browser-based automatic speech recognition:
 GEMINI_API_KEY=your_api_key_here
 ```
 
-### Optional LangChain Integration
-The application supports both direct Gemini API and LangChain integration. LangChain provides additional features but requires compatible versions.
+### LangChain Integration
+The application uses LangChain as the primary framework for Gemini AI integration, providing:
+- Structured prompt management
+- Conversation chain handling
+- Seamless API abstraction
+- Fallback to direct Gemini API if LangChain is unavailable
 
 ### Database Configuration
 - SQLite database path: `education_store.db`
@@ -318,6 +322,7 @@ The application supports both direct Gemini API and LangChain integration. LangC
 
 ### **AI & Language Models:**
 - **Google Gemini AI**: https://ai.google.dev/ (for RAG text generation)
+- **LangChain**: https://python.langchain.com/ (AI framework for Gemini integration)
 - **Google Cloud Speech-to-Text**: https://cloud.google.com/speech-to-text (ASR backend)
 - **Google Text-to-Speech (gTTS)**: https://pypi.org/project/gTTS/ (TTS service)
 
