@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSmart Store Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .chat-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .products-section {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 1px solid #e9ecef;
+            overflow-y: auto;
+        }
+
+        .chat-container {
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            background: #fafbfc;
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 80%;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .assistant-message {
+            background: white;
+            border: 1px solid #e9ecef;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .audio-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .audio-button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .audio-button.playing {
+            background: #dc3545;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .message-input:focus {
+            border-color: #4facfe;
+        }
+
+        .settings-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .setting-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .setting-group h4 {
+            margin-bottom: 10px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .response-type-selector {
+            display: flex;
+            gap: 5px;
+        }
+
+        .response-type-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .response-type-btn.active {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 5px;
+        }
+
+        .language-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .language-btn.active {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-voice {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%);
+            color: white;
+        }
+
+        .btn-voice.listening {
+            background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+            animation: pulse 1s infinite;
+        }
+
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+
+        .products-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #4facfe;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            color: #4facfe;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .product-category {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 18px;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            max-width: 80px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #6c757d;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #6c757d;
+            padding: 40px 20px;
+        }
+
+        .welcome-message h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .products-section {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e9ecef;
+            }
+
+            .settings-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 EduSmart Store Assistant</h1>
+            <p>Your AI-powered education store helper with bilingual voice support</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="settings-section">
+                    <div class="setting-group">
+                        <h4>Response Type</h4>
+                        <div class="response-type-selector">
+                            <button class="response-type-btn active" data-type="both" onclick="setResponseType('both')">
+                                🔊 Text & Voice
+                            </button>
+                            <button class="response-type-btn" data-type="text" onclick="setResponseType('text')">
+                                📝 Text Only
+                            </button>
+                            <button class="response-type-btn" data-type="voice" onclick="setResponseType('voice')">
+                                🎵 Voice Only
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4>Language / ភាសា</h4>
+                        <div class="language-selector">
+                            <button class="language-btn active" data-lang="en" onclick="setLanguage('en')">
+                                🇬🇧 English
+                            </button>
+                            <button class="language-btn" data-lang="km" onclick="setLanguage('km')">
+                                🇰🇭 ភាសាខ្មែរ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-container" id="chatContainer">
+                    <div class="welcome-message" id="welcomeMessage">
+                        <h3>Welcome to EduSmart Store! 🎒</h3>
+                        <p>I can help you find educational products, suggest learning materials, and answer questions about our store.</p>
+                        <p>Try asking about STEM kits, books, art supplies, or age-specific recommendations!</p>
+                        <p><small>Choose your preferred response type and language above!</small></p>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <input type="text" 
+                           class="message-input" 
+                           id="messageInput" 
+                           placeholder="Ask about educational products, age recommendations, or learning materials..."
+                           onkeypress="handleKeyPress(event)">
+                    <button class="btn btn-voice" id="voiceButton" onclick="toggleVoiceInput()">
+                        🎤 Voice
+                    </button>
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        📤 Send
+                    </button>
+                    <button class="btn btn-clear" onclick="clearChat()">
+                        🗑️ Clear
+                    </button>
+                </div>
+            </div>
+            
+            <div class="products-section">
+                <h3>📚 Featured Products</h3>
+                <div id="featuredProducts">
+                    <!-- Featured products will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let isListening = false;
+        let recognition = null;
+        const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let sessionId = null;
+        let currentResponseType = 'both';
+        let currentLanguage = 'en';
+        let currentAudio = null;
+
+        // Language translations
+        const translations = {
+            en: {
+                placeholder: "Ask about educational products, age recommendations, or learning materials...",
+                featuredProducts: "📚 Featured Products",
+                welcomeTitle: "Welcome to EduSmart Store! 🎒",
+                welcomeText1: "I can help you find educational products, suggest learning materials, and answer questions about our store.",
+                welcomeText2: "Try asking about STEM kits, books, art supplies, or age-specific recommendations!",
+                welcomeHint: "Choose your preferred response type and language above!",
+                voiceButton: "🎤 Voice",
+                sendButton: "📤 Send",
+                clearButton: "🗑️ Clear",
+                listening: "🔴 Stop",
+                playAudio: "🔊 Play Response",
+                playing: "🔊 Playing...",
+                errorPlaying: "🔊 Error Playing",
+                voiceOnly: "Voice response only",
+                textAndVoice: "Response includes both text and audio",
+                voiceResponseSent: "🎵 Voice response sent. Click play to listen.",
+                errorMessage: "Sorry, I encountered an error. Please check your connection and try again.",
+                noVoiceSupport: "Speech recognition not supported in your browser. Try Chrome or Edge."
+            },
+            km: {
+                placeholder: "សួរអំពីផលិតផលអប់រំ ការណែនាំអាយុ ឬសម្ភារៈសិក្សា...",
+                featuredProducts: "📚 ផលិតផលពិសេស",
+                welcomeTitle: "សូមស្វាគមន៍មកកាន់ហាង EduSmart! 🎒",
+                welcomeText1: "ខ្ញុំអាចជួយអ្នករកផលិតផលអប់រំ ណែនាំសម្ភារៈសិក្សា និងឆ្លើយសំណួរអំពីហាងរបស់យើង។",
+                welcomeText2: "សាកល្បងសួរអំពីឧបករណ៍ STEM សៀវភៅ គ្រឿងសិល្បៈ ឬការណែនាំតាមអាយុ!",
+                welcomeHint: "ជ្រើសរើសប្រភេទចម្លើយ និងភាសាដែលអ្នកចង់បានខាងលើ!",
+                voiceButton: "🎤 សំលេង",
+                sendButton: "📤 ផ្ញើ",
+                clearButton: "🗑️ សម្អាត",
+                listening: "🔴 បញ្ឈប់",
+                playAudio: "🔊 លេងចម្លើយ",
+                playing: "🔊 កំពុងលេង...",
+                errorPlaying: "🔊 មានកំហុស",
+                voiceOnly: "ឆ្លើយតបតាមសំលេងតែប៉ុណ្ណោះ",
+                textAndVoice: "ឆ្លើយតបមានទាំងអត្ថបទ និងសំលេង",
+                voiceResponseSent: "🎵 បានផ្ញើចម្លើយតាមសំលេង។ ចុចលេងដើម្បីស្តាប់។",
+                errorMessage: "សូមអភ័យទោស ខ្ញុំមានបញ្ហាក្នុងការភ្ជាប់។ សូមពិនិត្យការភ្ជាប់របស់អ្នក ហើយព្យាយាមម្តងទៀត។",
+                noVoiceSupport: "កម្មវិធីស្គ្រីបសំលេងមិនគាំទ្រនៅក្នុងកម្មវិធីរុករករបស់អ្នកទេ។ សាកល្បង Chrome ឬ Edge។"
+            }
+        };
+
+        // Initialize voice recognition
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = currentLanguage === 'km' ? 'km-KH' : 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('messageInput').value = transcript;
+                    sendMessage(true);
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    updateVoiceButton();
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    updateVoiceButton();
+                };
+            } else {
+                document.getElementById('voiceButton').style.display = 'none';
+            }
+        }
+
+        // Set response type
+        function setResponseType(type) {
+            currentResponseType = type;
+            
+            // Update button states
+            document.querySelectorAll('.response-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+        }
+
+        // Set language
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+            
+            // Update voice recognition language
+            if (recognition) {
+                recognition.lang = lang === 'km' ? 'km-KH' : 'en-US';
+            }
+            
+            // Update UI text
+            updateUILanguage(lang);
+        }
+
+        // Update UI language
+        function updateUILanguage(lang) {
+            const t = translations[lang];
+            
+            const input = document.getElementById('messageInput');
+            if (input) input.placeholder = t.placeholder;
+            
+            const productsTitle = document.querySelector('.products-section h3');
+            if (productsTitle) productsTitle.textContent = t.featuredProducts;
+            
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            if (welcomeMsg) {
+                welcomeMsg.innerHTML = `
+                    <h3>${t.welcomeTitle}</h3>
+                    <p>${t.welcomeText1}</p>
+                    <p>${t.welcomeText2}</p>
+                    <p><small>${t.welcomeHint}</small></p>
+                `;
+            }
+            
+            // Update buttons
+            const voiceBtn = document.getElementById('voiceButton');
+            if (voiceBtn && !isListening) voiceBtn.textContent = t.voiceButton;
+            
+            const sendBtn = document.querySelector('.btn-primary');
+            if (sendBtn) sendBtn.textContent = t.sendButton;
+            
+            const clearBtn = document.querySelector('.btn-clear');
+            if (clearBtn) clearBtn.textContent = t.clearButton;
+        }
+
+        // Toggle voice input
+        function toggleVoiceInput() {
+            if (!recognition) {
+                alert(translations[currentLanguage].noVoiceSupport);
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                }
+            }
+            isListening = !isListening;
+            updateVoiceButton();
+        }
+
+        // Update voice button appearance
+        function updateVoiceButton() {
+            const button = document.getElementById('voiceButton');
+            const t = translations[currentLanguage];
+            button.textContent = isListening ? t.listening : t.voiceButton;
+            button.classList.toggle('listening', isListening);
+        }
+
+        // Handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Send message to backend
+        async function sendMessage(isVoiceInput = false) {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Clear welcome message on first user message
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: userId,
+                        session_id: sessionId,
+                        response_type: currentResponseType,
+                        language: currentLanguage
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!sessionId) {
+                    sessionId = data.session_id;
+                }
+
+                // Hide typing indicator and add response
+                hideTypingIndicator();
+                addMessage(data.text, 'assistant', data.audio_data, data.response_type);
+
+                // Auto-play audio for voice responses from voice input
+                if (isVoiceInput && data.audio_data && currentResponseType !== 'text') {
+                    playAudio(data.audio_data);
+                }
+
+                // Load featured products based on conversation
+                loadFeaturedProducts(message);
+
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addMessage(translations[currentLanguage].errorMessage, 'assistant');
+            }
+        }
+
+        // Add message to chat container
+        function addMessage(text, sender, audioData = null, responseType = 'text') {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const t = translations[currentLanguage];
+            let messageContent = text;
+            
+            // Add audio controls for assistant messages with audio
+            if (sender === 'assistant' && audioData && responseType !== 'text') {
+                messageContent = `
+                    <div class="message-text">${text}</div>
+                    <div class="message-controls">
+                        <button class="audio-button" onclick="playAudio('${audioData}')">
+                            ${t.playAudio}
+                        </button>
+                        ${responseType === 'both' ? `<small>${t.textAndVoice}</small>` : `<small>${t.voiceOnly}</small>`}
+                    </div>
+                `;
+            } else if (sender === 'assistant' && responseType === 'voice') {
+                messageContent = `
+                    <div class="message-text">
+                        <em>${t.voiceResponseSent}</em>
+                    </div>
+                    <div class="message-controls">
+                        <button class="audio-button" onclick="playAudio('${audioData}')">
+                            ${t.playAudio}
+                        </button>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = messageContent;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Play audio from base64 data
+        function playAudio(audioBase64) {
+            try {
+                // Stop any currently playing audio
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+
+                // Convert base64 to blob
+                const audioBlob = base64ToBlob(audioBase64, 'audio/mpeg');
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                // Create and play audio
+                currentAudio = new Audio(audioUrl);
+                currentAudio.play();
+                
+                const t = translations[currentLanguage];
+                
+                // Update all play buttons to show playing state
+                document.querySelectorAll('.audio-button').forEach(btn => {
+                    btn.textContent = t.playing;
+                    btn.classList.add('playing');
+                    btn.disabled = true;
+                });
+
+                // Reset buttons when audio ends
+                currentAudio.onended = () => {
+                    document.querySelectorAll('.audio-button').forEach(btn => {
+                        btn.textContent = t.playAudio;
+                        btn.classList.remove('playing');
+                        btn.disabled = false;
+                    });
+                    currentAudio = null;
+                    URL.revokeObjectURL(audioUrl);
+                };
+
+                currentAudio.onerror = () => {
+                    document.querySelectorAll('.audio-button').forEach(btn => {
+                        btn.textContent = t.errorPlaying;
+                        btn.classList.remove('playing');
+                        btn.disabled = false;
+                    });
+                    currentAudio = null;
+                };
+
+            } catch (error) {
+                console.error('Error playing audio:', error);
+                alert('Error playing audio response. Please try again.');
+            }
+        }
+
+        // Convert base64 to blob
+        function base64ToBlob(base64, contentType = '') {
+            const byteCharacters = atob(base64);
+            const byteArrays = [];
+
+            for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+                const slice = byteCharacters.slice(offset, offset + 1024);
+                const byteNumbers = new Array(slice.length);
+                
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+
+            return new Blob(byteArrays, { type: contentType });
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const container = document.getElementById('chatContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Load featured products
+        async function loadFeaturedProducts(query = '') {
+            try {
+                // Sample featured products
+                const products = [
+                    {name: 'STEM Robotics Kit Pro', price: 129.99, category: 'STEM Kits', age: '10-16 years'},
+                    {name: 'Educational Learning Tablet', price: 159.99, category: 'Electronics', age: '3-10 years'},
+                    {name: 'Art Supplies Master Set', price: 45.50, category: 'Art Supplies', age: '5+ years'},
+                    {name: 'Programming for Kids Book', price: 19.99, category: 'Books', age: '9-14 years'},
+                    {name: 'Science Experiment Set', price: 29.99, category: 'Science Kits', age: '7-12 years'},
+                    {name: 'Math Learning Kit', price: 34.99, category: 'Mathematics', age: '6-10 years'}
+                ];
+
+                const container = document.getElementById('featuredProducts');
+                container.innerHTML = '';
+
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.innerHTML = `
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">$${product.price}</div>
+                        <div class="product-category">${product.category} • ${product.age}</div>
+                    `;
+                    container.appendChild(productCard);
+                });
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Clear chat history
+        function clearChat() {
+            // Stop any playing audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+
+            const container = document.getElementById('chatContainer');
+            const t = translations[currentLanguage];
+            container.innerHTML = `
+                <div class="welcome-message" id="welcomeMessage">
+                    <h3>${t.welcomeTitle}</h3>
+                    <p>${t.welcomeText1}</p>
+                    <p>${t.welcomeText2}</p>
+                    <p><small>${t.welcomeHint}</small></p>
+                </div>
+            `;
+            sessionId = null;
+        }
+
+        // Initialize the application
+        function initializeApp() {
+            initializeVoiceRecognition();
+            loadFeaturedProducts();
+            
+            // Focus on input field
+            document.getElementById('messageInput').focus();
+        }
+
+        // Start the app when page loads
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
