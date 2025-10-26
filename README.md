@@ -74,6 +74,7 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 ## 🔧 Installation
 
 
+```
 
 ### 1. Set Up Python Environment
 ```bash
@@ -310,6 +311,24 @@ The application supports both direct Gemini API and LangChain integration. LangC
 **Port already in use:**
 - Change port in uvicorn command
 - Kill existing processes on port 5000
+
+
+
+## 🔗 **External Services & APIs Used**
+
+### **AI & Language Models:**
+- **Google Gemini AI**: https://ai.google.dev/ (for RAG text generation)
+- **Google Cloud Speech-to-Text**: https://cloud.google.com/speech-to-text (ASR backend)
+- **Google Text-to-Speech (gTTS)**: https://pypi.org/project/gTTS/ (TTS service)
+
+### **Browser APIs:**
+- **Web Speech API**: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API (ASR)
+- **Web Audio API**: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API (audio playback)
+
+### **Vector Search & Embeddings:**
+- **ChromaDB**: https://www.trychroma.com/ (vector database)
+- **Sentence Transformers (all-MiniLM-L6-v2)**: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2 (embeddings)
+
 
 
 ---
