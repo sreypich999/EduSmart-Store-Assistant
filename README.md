@@ -54,7 +54,7 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 ### Frontend
 - **HTML5/CSS3**: Modern responsive design
 - **Vanilla JavaScript**: No framework dependencies
-- **ASR Integration**: Web Speech API for real-time speech recognition
+- **ASR Integration**: Web Speech API connecting to Google Cloud Speech (no API key required)
 - **TTS Playback**: Web Audio API for voice response playback
 - **Bilingual UI**: Dynamic language switching with Khmer and English support
 
@@ -73,7 +73,7 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 
 ## 🔧 Installation
 
-```
+
 
 ### 1. Set Up Python Environment
 ```bash
@@ -146,7 +146,7 @@ The FastAPI backend serves the frontend automatically.
 5. Receive AI-powered responses with product recommendations
 
 ### Voice Features (ASR & TTS)
-- **ASR Input**: Click the voice button to speak your query using browser-based speech recognition
+- **ASR Input**: Click the voice button to speak your query using Web Speech API (connects to Google Cloud Speech automatically - no API key needed)
 - **TTS Output**: Responses can include audio playback with gTTS-generated voice synthesis
 - **Language Detection**: Automatic language detection for speech recognition (English/Khmer)
 - **Voice Response Types**: Choose between text-only, voice-only, or combined text+voice responses
@@ -177,25 +177,40 @@ education-store/
 
 ## 🔍 Key Components
 
-### EducationStoreRAG Class
+### EducationStoreRAG Class - **RAG Implementation**
 Handles the core RAG (Retrieval-Augmented Generation) functionality:
-- **RAG Pipeline**: Retrieves relevant products via ChromaDB vector search, then generates contextual responses using Gemini AI
-- **Context Integration**: Combines product information with conversation history for personalized recommendations
+- **Retrieval**: Uses ChromaDB vector search with `all-MiniLM-L6-v2` embeddings to find relevant educational products
+- **Augmentation**: Combines retrieved product data with conversation history for context
+- **Generation**: Leverages Google Gemini AI to create personalized, accurate responses
 - **Multilingual Support**: Generates responses in English and Khmer with appropriate TTS language selection
 - **Fallback Mechanisms**: Graceful degradation when AI services are unavailable
 
-### ChromaProductSearch Class
+### ChromaProductSearch Class - **Vector Search Engine**
 Manages vector-based product search:
-- **Embedding Model**: Uses `all-MiniLM-L6-v2` (Sentence Transformers) for semantic text embeddings
-- Semantic search through product catalog with vector similarity matching
-- Fallback to demo products if ChromaDB unavailable
-- Metadata filtering and ranking based on relevance scores
+- **Embedding Model**: Uses `all-MiniLM-L6-v2` (Sentence Transformers) for 384-dimensional semantic text embeddings
+- **Semantic Search**: Vector similarity matching through 50+ educational products
+- **Fallback System**: Returns demo products if ChromaDB is unavailable
+- **Metadata Filtering**: Ranks results based on relevance scores and product attributes
+
+### TextToSpeechService Class - **TTS Implementation**
+Handles text-to-speech conversion:
+- **TTS Engine**: Google gTTS (Google Text-to-Speech) for high-quality voice synthesis
+- **Language Support**: English and Khmer voice generation
+- **Text Cleaning**: Removes markdown, links, and formatting for clean speech output
+- **Audio Format**: Base64-encoded audio for web playback
 
 ### ConversationMemory Class
 Maintains chat history and context:
 - SQLite-based persistent storage
 - Session-based conversation tracking
 - Automatic cleanup and management
+
+### Frontend ASR Integration - **Speech Recognition**
+Browser-based automatic speech recognition:
+- **API**: Web Speech API (browser-native, no API key required)
+- **Provider**: Google Cloud Speech (automatic browser integration)
+- **Languages**: English (`en-US`) and Khmer (`km-KH`) support
+- **Features**: Real-time transcription, continuous mode, error handling
 
 ## 🌐 Browser Support
 
@@ -205,9 +220,50 @@ Maintains chat history and context:
 - Firefox (limited voice features)
 
 ### Voice Features
+- **ASR**: Uses Web Speech API (browser-native, connects to Google Cloud Speech automatically - no API key needed)
+- **TTS**: Uses Google gTTS service for voice synthesis
 - Speech recognition requires HTTPS in production
 - Text-to-speech works in all modern browsers
 - Khmer language support may vary by browser
+
+## 🔄 **Complete RAG + ASR + TTS Integration Flow**
+
+### **Step-by-Step Process:**
+
+1. **🎤 ASR Input** (Web Speech API)
+   - User clicks voice button → Browser requests microphone permission
+   - Speech captured → Sent to Google Cloud Speech (automatic, no API key)
+   - Audio transcribed to text in real-time (English/Khmer support)
+   - Text inserted into chat input field
+
+2. **🔍 RAG Retrieval** (ChromaDB + Sentence Transformers)
+   - User text query processed using `all-MiniLM-L6-v2` embeddings
+   - Semantic search through 50+ educational products in vector database
+   - Top relevant products retrieved based on similarity scores
+   - Product metadata (name, description, price, category) extracted
+
+3. **🤖 RAG Generation** (Google Gemini AI)
+   - Retrieved product data + conversation history → Context creation
+   - Multilingual prompts generated (English/Khmer)
+   - Gemini AI generates personalized, contextual responses
+   - Response stored in conversation memory (SQLite)
+
+4. **🔊 TTS Output** (Google gTTS)
+   - AI response text cleaned (remove markdown, formatting)
+   - Language detected (English/Khmer) for appropriate voice
+   - Text converted to speech audio via Google gTTS
+   - Audio encoded as Base64 for web playback
+
+5. **🎧 Audio Playback** (Web Audio API)
+   - Base64 audio decoded and played in browser
+   - Voice response synchronized with text display
+   - Multiple audio responses can play sequentially
+
+### **Technology Integration:**
+- **ASR**: Browser-native (Web Speech API) → Google Cloud Speech
+- **RAG**: ChromaDB (embeddings) + Gemini AI (generation)
+- **TTS**: Google gTTS service
+- **Storage**: SQLite (conversations) + ChromaDB (vectors)
 
 ## 🛡️ Security Considerations
 
@@ -251,15 +307,9 @@ The application supports both direct Gemini API and LangChain integration. LangC
 - Check file permissions
 - Verify ChromaDB installation
 
-
-
-
-## 🙏 Acknowledgments
-
-- Google Gemini AI for language model capabilities
-- ChromaDB for vector database functionality
-- FastAPI for the web framework
-- gTTS for text-to-speech services
+**Port already in use:**
+- Change port in uvicorn command
+- Kill existing processes on port 5000
 
 
 ---
