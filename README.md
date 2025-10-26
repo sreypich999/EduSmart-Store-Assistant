@@ -73,13 +73,9 @@ EduSmart Store Assistant is a sophisticated chatbot application designed to help
 
 ## 🔧 Installation
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd education-store
 ```
 
-### 2. Set Up Python Environment
+### 1. Set Up Python Environment
 ```bash
 # Using uv (recommended)
 uv venv
@@ -90,18 +86,18 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 ```bash
 pip install -r backend/requirements.txt
 ```
 
-### 4. Configure Environment Variables
+### 3. Configure Environment Variables
 Create a `.env` file in the `backend/` directory:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### 5. Initialize Databases
+### 4. Initialize Databases
 ```bash
 cd backend
 python init_database.py
